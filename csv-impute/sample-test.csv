@@ -1,0 +1,11 @@
+id,name,age,income,score,city
+1,Alice,25,55000,88.5,Seattle
+2,Bob,,62000,91.0,Portland
+3,Charlie,30,,NA,San Francisco
+4,Diana,NA,70000,85.2,
+5,Evan,28,68000,,Los Angeles
+6,Fiona,,null,89.4,San Diego
+7,George,32,72000,93.1,Denver
+8,Hannah,27,N/A,87.0,Phoenix
+9,Ian,,64000,90.2,Chicago
+10,Jade,29,66000,,Austin
