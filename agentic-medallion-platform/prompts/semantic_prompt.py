@@ -1,19 +1,21 @@
-SEMANTIC_PROMPT = """
+from string import Template
+
+SEMANTIC_PROMPT = Template("""
 You are an expert Data Architect.
 
 Your task is to determine the business meaning of a dataset column.
 
 Dataset Name:
-{dataset_name}
+$dataset_name
 
 Column Name:
-{column_name}
+$column_name
 
 Detected Data Type:
-{data_type}
+$data_type
 
 Sample Values:
-{sample_values}
+$sample_values
 
 Choose ONLY one semantic type from this list:
 
@@ -37,4 +39,4 @@ Example:
     "confidence": 98,
     "reasoning": "Column name and sample values strongly indicate customer identifiers."
 }
-"""
+""")

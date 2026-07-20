@@ -1,38 +1,61 @@
-from models.state import ProfileState
+import pandas as pd
 
-from langgraph.graph import StateGraph, START, END
-from tools.schema_tool import analyze_schema
-
-def profiler_node(state:ProfileState) -> ProfileState:
-    """
-    First Langgraph node
-    Currently it only updates the state.
-    """
-
-    print("Profiler node started...")
-
-    # print(f"Input file: {state['file_path']}")
-
-    # state["report"] = {"status": "Profiler node executed successfully."}
-    schema = analyze_schema(state["file_path"])
-
-    state["schema"] = schema
-
-    return state
-
-def create_graph():
-
-    #Create a workflow that uses ProfileState
-    workflow = StateGraph(ProfileState)
-
-    #Register the node
-    workflow.add_node("profiler", profiler_node)
-
-    #start -> Profiler
-    workflow.add_edge(START, "profiler")
-    #profiler -> end
-    workflow.add_edge("profiler", END)
+from contracts.dataset_profile import (
+    DatasetMetadata,
+    DatasetProfile,
+)
+from tools.quality_analyzer import QualityAnalyzer
+from tools.schema_analyzer import SchemaAnalyzer
+from tools.semantic_analyzer import SemanticAnalyzer
+from tools.statistics_analyzer import StatisticsAnalyzer
+from tools.summary_generator import SummaryGenerator
 
 
-    #compile the workflow
-    return workflow.compile()
+class ProfilerAgent:
+
+    def __init__(self):
+
+        self.schema = SchemaAnalyzer()
+        self.quality = QualityAnalyzer()
+        self.statistics = StatisticsAnalyzer()
+        self.semantic = SemanticAnalyzer()
+        self.summary = SummaryGenerator()
+
+    def execute(
+        self,
+        dataset_name: str,
+        dataframe: pd.DataFrame,
+    ) -> DatasetProfile:
+
+        metadata = DatasetMetadata(
+            dataset_name=dataset_name,
+            total_rows=len(dataframe),
+            total_columns=len(dataframe.columns),
+        )
+
+        columns = self.schema.analyze(dataframe)
+
+        quality = self.quality.analyze(dataframe)
+
+        statistics = self.statistics.analyze(dataframe)
+
+        semantic_hints = self.semantic.analyze(
+            dataset_name,
+            columns,
+        )
+
+        ai_summary = self.summary.generate(
+            dataset_name,
+            columns,
+            quality,
+            statistics,
+        )
+
+        return DatasetProfile(
+            metadata=metadata,
+            columns=columns,
+            quality=quality,
+            statistics=statistics,
+            semantic_hints=semantic_hints,
+            ai_summary=ai_summary,
+        )
