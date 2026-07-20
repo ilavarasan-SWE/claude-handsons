@@ -1,21 +1,24 @@
+import sys
+
 from agents.profiler_agent import create_graph
-def main():
+
+
+def main() -> None:
+    file_path = sys.argv[1] if len(sys.argv) > 1 else "data/sales_raw.csv"
 
     app = create_graph()
-
     initial_state = {
-        "file_path": "data/sales_raw.csv",
+        "file_path": file_path,
         "schema": {},
         "quality": {},
         "statistics": {},
-        "report": {}
-    } 
+        "report": {},
+    }
 
-    #Invoke the langgraph workflow with the initial state(langgraph workflow eg: start -> profiler -> end)
     result = app.invoke(initial_state)
 
     print("\n================== Final State ==================")
-    print(result)
+    print(result.get("final_report", result))
 
 if __name__ == "__main__":
     main()

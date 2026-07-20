@@ -1,5 +1,3 @@
-from llm.ollama_llm import OllamaLLM
-
 class LLMFactory:
     """
     Creates the configured LLM implementation.
@@ -7,5 +5,12 @@ class LLMFactory:
 
     @staticmethod
     def create():
-        return OllamaLLM()  # Currently, only OllamaLLM is supported.
+        try:
+            from llm.ollama_llm import OllamaLLM
+
+            return OllamaLLM()
+        except Exception:
+            from llm.fallback_llm import FallbackLLM
+
+            return FallbackLLM()
 
